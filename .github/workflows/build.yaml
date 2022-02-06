@@ -30,7 +30,7 @@ jobs:
         with:
           images: docker.io/osmond/sample-page
           tags: |
-            type=ref,event=branch,pattern={{branch}}:{{sha}}
+            type=raw,value={{branch}}-{{sha}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
