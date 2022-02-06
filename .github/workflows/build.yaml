@@ -63,6 +63,8 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
       - name: Push to repo
         run : |
+          git config --global user.email "bot@osmond.club"
+          git config --global user.name "Osmond bot"
           cp /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz
           git commit -m "New version"
           git push origin main
