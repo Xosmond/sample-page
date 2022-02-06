@@ -1,0 +1,9 @@
+# Default values for osmond-nginx.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicas: 1
+appName: osmond-sample-page
+containerImage: docker.io/osmond/sample-page
+service:
+  port: 80
