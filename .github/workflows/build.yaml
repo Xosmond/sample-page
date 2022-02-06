@@ -62,4 +62,4 @@ jobs:
           token: ${{ secrets.GIT_TOKEN }}
       - name: Push to repo
         run : |
-          ls -la /home/runner/work
+          ls -la /home/runner/work/sample-page/sample-page
