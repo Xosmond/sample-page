@@ -55,3 +55,10 @@ jobs:
           sudo apt-get install helm
           helm plugin install https://github.com/thynquest/helm-pack.git
           helm pack deploy/chart --set containerImage=docker.io/osmond/sample-page:${{ steps.meta.outputs.labels }}
+      - name: Check out my other private repo
+        uses: actions/checkout@v2
+        with:
+          repository: Xosmond/helm-charts
+      - name: Push to repo
+        run : |
+          ls -la /home/runner/work/sample-page
