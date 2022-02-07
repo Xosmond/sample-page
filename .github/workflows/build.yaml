@@ -46,6 +46,13 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: docker.io/osmond/sample-page
+          tags: |
+            type=raw,value={{branch}}-{{sha}}
       - name: Install helm
         run : |
           curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
