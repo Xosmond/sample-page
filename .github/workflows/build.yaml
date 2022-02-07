@@ -61,7 +61,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install helm
           helm plugin install https://github.com/thynquest/helm-pack.git
-          helm pack deploy/chart --set containerImage="docker.io/osmond/sample-page:${{ steps.meta.outputs.tags }}"
+          helm pack deploy/chart --set containerImage="${{ steps.meta.outputs.tags }}"
           cp /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz
       - name: Check out my other private repo
         uses: actions/checkout@v2
