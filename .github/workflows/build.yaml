@@ -40,7 +40,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
   push_to_repo:
-    # needs: push_to_registry
+    needs: push_to_registry
     name: Push chart to repository
     runs-on: ubuntu-latest
     steps:
@@ -61,7 +61,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install helm
           helm plugin install https://github.com/thynquest/helm-pack.git
-          helm pack deploy/chart --set containerImage=docker.io/osmond/sample-page:${{ steps.meta.outputs.labels }}
+          helm pack deploy/chart --set containerImage="docker.io/osmond/sample-page:${{ steps.meta.outputs.tags }}"
           cp /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz
       - name: Check out my other private repo
         uses: actions/checkout@v2
