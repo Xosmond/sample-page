@@ -57,7 +57,9 @@ jobs:
       - name: Prep helm chart
         run: |
           sudo snap install doctl
-          ls -la
+          sudo snap connect doctl:kube-config
+          sudo snap connect doctl:ssh-keys :ssh-keys
+          sudo snap connect doctl:dot-docker
           mv ./deploy/chart/Chart.yaml ./deploy/chart/Chart.old.yaml &&
           cat ./deploy/chart/Chart.old.yaml | grep -v appVersion > ./deploy/chart/Chart.yaml &&
           echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./deploy/chart/Chart.yaml &&
