@@ -53,26 +53,42 @@ jobs:
           images: docker.io/osmond/sample-page
           tags: |
             type=raw,value={{branch}}-{{sha}}
-      - name: Install helm
-        run : |
-          curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-          sudo apt-get install apt-transport-https --yes
-          echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
-          helm plugin install https://github.com/thynquest/helm-pack.git
-          helm pack deploy/chart --set containerImage="${{ steps.meta.outputs.tags }}"
-          cp /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz
-      - name: Check out my other private repo
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v1
+      - name: Prep helm chart
+        run: |
+          mv ./deploy/chart/Chart.yaml ./deploy/chart/Chart.old.yaml &&
+          cat ./deploy/chart/Chart.old.yaml | grep -v appVersion > ./deploy/chart/Chart.yaml &&
+          echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./deploy/chart/Chart.yaml &&
+          mv ./deploy/chart/Values.yaml ./deploy/chart/Values.old.yaml &&
+          cat ./deploy/chart/Values.old.yaml | grep -v containerImage > ./deploy/chart/Values.yaml &&
+          echo -e "\r\ncontainerImage: ${{ steps.meta.outputs.tags }}\r\n" >> ./deploy/chart/Values.yaml &&
+          cat ./deploy/chart/Chart.yaml
+          cat ./deploy/chart/Values.yaml
+      - name: Deploy
+        uses: WyriHaximus/github-action-helm3@v2
         with:
-          repository: Xosmond/helm-charts
-          token: ${{ secrets.GIT_TOKEN }}
-      - name: Push to repo
-        run : |
-          git config --global user.email "bot@osmond.club"
-          git config --global user.name "Osmond bot"
-          cp /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz
-          git add .
-          git commit -m "New version"
-          git push origin main
+          exec: helm upgrade sample-page ./deploy/chart/ --install --wait --atomic --values=./.helm/app/values.yaml
+          kubeconfig: '${{ secrets.KUBECONFIG }}'
+      # - name: Install helm
+      #   run : |
+      #     curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+      #     sudo apt-get install apt-transport-https --yes
+      #     echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+      #     sudo apt-get update
+      #     sudo apt-get install helm
+      #     helm plugin install https://github.com/thynquest/helm-pack.git
+      #     helm pack deploy/chart --set containerImage="${{ steps.meta.outputs.tags }}"
+      #     cp /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz
+      # - name: Check out my other private repo
+      #   uses: actions/checkout@v2
+      #   with:
+      #     repository: Xosmond/helm-charts
+      #     token: ${{ secrets.GIT_TOKEN }}
+      # - name: Push to repo
+      #   run : |
+      #     git config --global user.email "bot@osmond.club"
+      #     git config --global user.name "Osmond bot"
+      #     cp /home/runner/work/_temp/osmond-sample-page-0.2.1.tgz /home/runner/work/sample-page/sample-page/osmond-sample-page-0.2.1.tgz
+      #     git add .
+      #     git commit -m "New version"
+      #     git push origin main
