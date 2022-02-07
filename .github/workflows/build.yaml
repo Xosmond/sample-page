@@ -60,15 +60,15 @@ jobs:
           mv ./deploy/chart/Chart.yaml ./deploy/chart/Chart.old.yaml &&
           cat ./deploy/chart/Chart.old.yaml | grep -v appVersion > ./deploy/chart/Chart.yaml &&
           echo -e "\r\nappVersion: v${GITHUB_REF##*/}\r\n" >> ./deploy/chart/Chart.yaml &&
-          mv ./deploy/chart/Values.yaml ./deploy/chart/Values.old.yaml &&
-          cat ./deploy/chart/Values.old.yaml | grep -v containerImage > ./deploy/chart/Values.yaml &&
-          echo -e "\r\ncontainerImage: ${{ steps.meta.outputs.tags }}\r\n" >> ./deploy/chart/Values.yaml &&
+          mv ./deploy/chart/values.yaml ./deploy/chart/values.old.yaml &&
+          cat ./deploy/chart/values.old.yaml | grep -v containerImage > ./deploy/chart/values.yaml &&
+          echo -e "\r\ncontainerImage: ${{ steps.meta.outputs.tags }}\r\n" >> ./deploy/chart/values.yaml &&
           cat ./deploy/chart/Chart.yaml
-          cat ./deploy/chart/Values.yaml
+          cat ./deploy/chart/values.yaml
       - name: Deploy
         uses: WyriHaximus/github-action-helm3@v2
         with:
-          exec: helm upgrade sample-page ./deploy/chart/ --install --wait --atomic --values=./.helm/app/values.yaml
+          exec: helm upgrade sample-page ./deploy/chart/ --install --wait --atomic --values=./deploy/chart/values.yaml
           kubeconfig: '${{ secrets.KUBECONFIG }}'
       # - name: Install helm
       #   run : |
